@@ -15,4 +15,4 @@ module.exports = (req) => {
 </body>
 </html>`.trim();
   return html;
-}
+};
