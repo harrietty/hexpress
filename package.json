@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./spec"
+    "test": "mocha ./spec",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
