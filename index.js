@@ -1,10 +1,12 @@
 const http = require('http');
 
+const cannotGet = require('./templates/cannotGet');
+
 function hexpress () {
   const nodeServer = http.createServer((req, res) => {
     res.statusCode = 404;
     res.setHeader('Content-Type', 'text/html');
-    res.write('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /</pre>\n</body>\n</html>\n');
+    res.write(cannotGet(req));
     res.end();
   });
   const app = {
