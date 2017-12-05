@@ -3,12 +3,12 @@ const request = require('supertest');
 // const http = require('http');
 const PORT = 3001;
 
-const hexpress = require('../index');
+const Hexpress = require('../index');
 
 describe('Hexpress', function () {
   let server, app;
   before(done => {
-    app = hexpress();
+    app = new Hexpress();
     server = app.listen(PORT, done);
   });
   after(done => {
@@ -16,8 +16,7 @@ describe('Hexpress', function () {
   });
   describe('An instance of hexpress()', function () {
     it('has a listen method', function () {
-      const app = hexpress();
-      expect(app).to.haveOwnProperty('listen');
+      expect(app.listen).to.be.a('function');
     });
     it('can listen for incoming requests', function (done) {
       request(server) // testing for app creates a new Http app in supertest and runs through all the methods on http.Server
