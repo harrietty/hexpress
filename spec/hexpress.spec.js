@@ -109,6 +109,18 @@ describe('Hexpress', function () {
           done();
         });
     });
+    it('adds a handler to /api', function (done) {
+      app.post('/api', (req, res) => {
+        res.status(200).send('Post to the API endpoint');
+      });
+      request(server)
+        .post('/api')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('Post to the API endpoint');
+          done();
+        });
+    });
   });
   describe('app.put()', function () {
     it('adds a handler to the home route on PUT', done => {
@@ -120,6 +132,18 @@ describe('Hexpress', function () {
         .expect(200)
         .end((err, res) => {
           expect(res.text).to.equal('Content updated');
+          done();
+        });
+    });
+    it('adds a handler to /api', function (done) {
+      app.put('/api', (req, res) => {
+        res.status(200).send('Put on the API endpoint');
+      });
+      request(server)
+        .put('/api')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('Put on the API endpoint');
           done();
         });
     });
@@ -148,7 +172,19 @@ describe('Hexpress', function () {
         .expect(200)
         .end((err, res) => {
           expect(res.text).to.equal('Spell with an ID');
-          done()
+          done();
+        });
+    });
+    it('adds a handler to /api/:spelltype/:id', function (done) {
+      app.get('/api/:spelltype/:id', (req, res) => {
+        res.status(200).send('Spell with a type and name');
+      });
+      request(server)
+        .get('/api/hexes/6')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('Spell with a type and name');
+          done();
         });
     });
   });
