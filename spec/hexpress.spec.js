@@ -71,27 +71,27 @@ describe('Hexpress', function () {
           done();
         });
     });
-    it('adds a handler to api/owners', function (done) {
-      app.get('/api/owners', (req, res) => {
-        res.status(200).send('On the api/owners endpoint');
+    it('adds a handler to api/jinxes', function (done) {
+      app.get('/api/jinxes', (req, res) => {
+        res.status(200).send('On the api/jinxes endpoint');
       });
       request(server)
-        .get('/api/owners')
+        .get('/api/jinxes')
         .expect(200)
         .end((err, res) => {
-          expect(res.text).to.equal('On the api/owners endpoint');
+          expect(res.text).to.equal('On the api/jinxes endpoint');
           done();
         });
     });
-    it('adds a handler to /api/pets', function (done) {
-      app.get('/api/pets', (req, res) => {
-        res.status(200).send('On the api/pets endpoint');
+    it('adds a handler to /api/spells', function (done) {
+      app.get('/api/spells', (req, res) => {
+        res.status(200).send('On the api/spells endpoint');
       });
       request(server)
-        .get('/api/pets')
+        .get('/api/spells')
         .expect(200)
         .end((err, res) => {
-          expect(res.text).to.equal('On the api/pets endpoint');
+          expect(res.text).to.equal('On the api/spells endpoint');
           done();
         });
     });
@@ -135,6 +135,20 @@ describe('Hexpress', function () {
         .end((err, res) => {
           expect(res.text).to.equal('Content deleted');
           done();
+        });
+    });
+  });
+  describe('parameterised routing', function () {
+    it('adds a handler to /api/spells/:id', function (done) {
+      app.get('/api/spells/:id', (req, res) => {
+        res.status(200).send('Spell with an ID');
+      });
+      request(server)
+        .get('/api/spells/5')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('Spell with an ID');
+          done()
         });
     });
   });
