@@ -59,6 +59,42 @@ describe('Hexpress', function () {
           done();
         });
     });
+    it('adds a handler to /api', function (done) {
+      app.get('/api', (req, res) => {
+        res.status(200).send('On the API endpoint');
+      });
+      request(server)
+        .get('/api')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('On the API endpoint');
+          done();
+        });
+    });
+    it('adds a handler to api/owners', function (done) {
+      app.get('/api/owners', (req, res) => {
+        res.status(200).send('On the api/owners endpoint');
+      });
+      request(server)
+        .get('/api/owners')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('On the api/owners endpoint');
+          done();
+        });
+    });
+    it('adds a handler to /api/pets', function (done) {
+      app.get('/api/pets', (req, res) => {
+        res.status(200).send('On the api/pets endpoint');
+      });
+      request(server)
+        .get('/api/pets')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('On the api/pets endpoint');
+          done();
+        });
+    });
   });
   describe('app.post()', function () {
     it('adds a handler to the home route on POST', done => {
