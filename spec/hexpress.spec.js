@@ -47,15 +47,57 @@ describe('Hexpress', function () {
     });
   });
   describe('app.get()', () => {
-    it('adds a handler to the specified route', done => {
+    it('adds a handler to the home route on GET', done => {
       app.get('/', (req, res) => {
-        res.status(201).send('fooo!');
+        res.status(200).send('fooo!');
       });
       request(server)
         .get('/')
-        .expect(201)
+        .expect(200)
         .end((err, res) => {
           expect(res.text).to.equal('fooo!');
+          done();
+        });
+    });
+  });
+  describe('app.post()', function () {
+    it('adds a handler to the home route on POST', done => {
+      app.post('/', (req, res) => {
+        res.status(201).send('Content created');
+      });
+      request(server)
+        .post('/')
+        .expect(201)
+        .end((err, res) => {
+          expect(res.text).to.equal('Content created');
+          done();
+        });
+    });
+  });
+  describe('app.put()', function () {
+    it('adds a handler to the home route on PUT', done => {
+      app.put('/', (req, res) => {
+        res.status(200).send('Content updated');
+      });
+      request(server)
+        .put('/')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('Content updated');
+          done();
+        });
+    });
+  });
+  describe('app.delete()', function () {
+    it('adds a handler to the home route on DELETE', done => {
+      app.delete('/', (req, res) => {
+        res.status(200).send('Content deleted');
+      });
+      request(server)
+        .delete('/')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('Content deleted');
           done();
         });
     });

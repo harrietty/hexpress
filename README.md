@@ -25,7 +25,7 @@ Run the test suite:
 - Can get a new Hexpress app &#10003;
 - Default 404 error handling &#10003;
 - Basic GET routing &#10003;
-- PUT, POST, DELETE routing
+- PUT, POST, DELETE routing &#10003;
 - Support parameterised routes
 - Support queries
 - Support custom middleware
