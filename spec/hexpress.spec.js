@@ -1,17 +1,17 @@
 const {expect} = require('chai');
 const request = require('supertest');
-// const http = require('http');
-const PORT = 3001;
+const {json} = require('body-parser');
+const PORT = 3000;
 
 const Hexpress = require('../index');
 
 describe('Hexpress', function () {
   let server, app;
-  before(done => {
+  beforeEach(done => {
     app = new Hexpress();
     server = app.listen(PORT, done);
   });
-  after(done => {
+  afterEach(done => {
     server.close(done);
   });
   describe('An instance of hexpress()', function () {
@@ -162,6 +162,99 @@ describe('Hexpress', function () {
         });
     });
   });
+  describe('app.use()', function () {
+    it('allows the use of custom middleware', function (done) {
+      app.use((req, res, next) => {
+        res.someProp = 'foo';
+        next();
+      });
+      app.get('/api', (req, res) => {
+        res.status(200).send(res.someProp);
+      });
+      request(server)
+        .get('/api')
+        .end((err, res) => {
+          expect(res.text).to.equal('foo');
+          done();
+        });
+    });
+    it('passes the req and res through multiple custom middlewares in the correct order', function (done) {
+      app.use((req, res, next) => {
+        res.someProp = 'foo2';
+        res.other = 'cauldron';
+        next();
+      });
+      app.get('/api', (req, res) => {
+        res.status(200).send(`${res.someProp}, ${res.other}`);
+      });
+      request(server)
+        .get('/api')
+        .end((err, res) => {
+          expect(res.text).to.equal('foo2, cauldron');
+          done();
+        });
+    });
+    it('jumps to the default error handler if an error occurs in custom middleware', function (done) {
+      app.use((req, res, next) => {
+        next('some error');
+      });
+      app.get('/api', (req, res) => {
+        res.status(200).send('Nothing');
+      });
+      request(server)
+        .get('/api')
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.text).to.equal('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api</pre>\n</body>\n</html>');
+          done();
+        });
+    });
+    it('jumps to the default error handler if error occurs in endpoint middleware', function (done) {
+      app.get('/api', (req, res, next) => {
+        next('Some error');
+      });
+      request(server)
+        .get('/api')
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.text).to.equal('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /api</pre>\n</body>\n</html>');
+          done();
+        });
+    });
+    it('allows the addition of custom error handling middleware', function (done) {
+      app.get('/api', (req, res, next) => {
+        next('Some error happened');
+      });
+      app.use((err, req, res, next) => {
+        res.status(500).send(err);
+      });
+      request(server)
+        .get('/api')
+        .end((err, res) => {
+          expect(res.status).to.equal(500);
+          expect(res.text).to.equal('Some error happened');
+          done();
+        });
+    });
+    it('allows a chain of custom error handling middlewares', function (done) {
+      app.get('/api', (req, res, next) => {
+        next('Some error happened');
+      });
+      app.use((err, req, res, next) => {
+        next(err + ' again');
+      });
+      app.use((err, req, res, next) => {
+        res.status(501).send(err);
+      });
+      request(server)
+        .get('/api')
+        .end((err, res) => {
+          expect(res.status).to.equal(501);
+          expect(res.text).to.equal('Some error happened again');
+          done();
+        });
+    });
+  });
   describe('parameterised routing', function () {
     it('adds a handler to /api/spells/:id', function (done) {
       app.get('/api/spells/:id', (req, res) => {
@@ -200,4 +293,22 @@ describe('Hexpress', function () {
         });
     });
   });
+  // xdescribe('custom req properties and methods', function () {
+  //   let getReq, postReq;
+  //   const app = new Hexpress();
+  //   app.use(json());
+  //   const server = app.listen(PORT);
+  //   app.get('/api/spells/:id', (request) => {
+  //     getReq = request;
+  //   });
+  //   app.post('/api/spells/:id', (request) => {
+  //     postReq = request;
+  //   });
+  //   it('has a req.body which is undefined by default', function () {
+  //     expect(getReq.body).to.be.undefined;
+  //   });
+  //   it('populates req.body when you use bodyParsing middleware', function () {
+  //     expect()
+  //   });
+  // });
 });

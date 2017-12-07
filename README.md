@@ -28,8 +28,8 @@ Run the test suite:
 - PUT, POST, DELETE routing &#10003;
 - Support parameterised routes &#10003;
 - Support queries
-- Support custom middleware
-- Support custom error middleware
+- Support custom middleware &#10003;
+- Support custom error middleware &#10003;
 - Support serving static files
 - Support using a template engine
 - Hexpress.Router ?
