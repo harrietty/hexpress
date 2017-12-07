@@ -43,6 +43,14 @@ Hexpress.prototype.delete = function (path, handler) {
   });
 };
 
+Hexpress.prototype.all = function (path, handler) {
+  this.middlewares.push({
+    type: 'route',
+    path: new PathObject(path, 'ALL'),
+    handler
+  });
+};
+
 Hexpress.prototype.use = function (mw) {
   if (mw.length === 4) this.errorMiddlewares.splice(this.errorMiddlewares.length - 1, 0, mw);
   else {
@@ -53,10 +61,6 @@ Hexpress.prototype.use = function (mw) {
     });
   }
 };
-
-// app.get('/api', (req, res, next) => {
-//   next('Some error');
-// });
 
 const defaultError = {
   error: 'Internal server error'
@@ -76,7 +80,12 @@ Hexpress.prototype.listen = function (...args) {
           if (err) return tryMiddlewares([], req, res, err);
           return tryMiddlewares(middlewares.slice(1), req, res);
         });
-      } else if (mw.path && mw.path.method === method) {
+      } else if (mw.path && mw.path.method === 'ALL' && mw.path.path === pathname) {
+        return mw.handler(req, res, (err) => {
+          return tryMiddlewares([], req, res, err);
+        });
+      } 
+      else if (mw.path && mw.path.method === method) {
         if (!mw.path.parameterized && (mw.path.path === pathname)) return mw.handler(req, res, (err) => {
           if (err) tryMiddlewares([], req, res, err);
         });
@@ -88,6 +97,8 @@ Hexpress.prototype.listen = function (...args) {
             if (err) tryMiddlewares([], req, res, err);
           });
         }
+      } else {
+        return tryMiddlewares(middlewares.slice(1), req, res);
       }
     };
 

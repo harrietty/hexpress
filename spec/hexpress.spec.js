@@ -1,6 +1,6 @@
-const {expect} = require('chai');
+const { expect } = require('chai');
 const request = require('supertest');
-const {json} = require('body-parser');
+const { json } = require('body-parser');
 const PORT = 3000;
 
 const Hexpress = require('../index');
@@ -159,6 +159,29 @@ describe('Hexpress', function () {
         .end((err, res) => {
           expect(res.text).to.equal('Content deleted');
           done();
+        });
+    });
+  });
+  describe('app.all()', function () {
+    it('adds a handler to a route that is called for any request methods', function (done) {
+      app.put('/potions', (req, res) => {
+        res.status(500).send('foo');
+      });
+      app.all('/wizards', (req, res) => {
+        res.status(201).send('Abra Cadabra!');
+      });
+      request(server)
+        .get('/wizards')
+        .end((err, res) => {
+          expect(res.status).to.equal(201);
+          expect(res.text).to.equal('Abra Cadabra!');
+          request(server)
+            .post('/wizards')
+            .end((err, res) => {
+              expect(res.status).to.equal(201);
+              expect(res.text).to.equal('Abra Cadabra!');
+              done();
+            });
         });
     });
   });
