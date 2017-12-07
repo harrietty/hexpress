@@ -26,7 +26,7 @@ Run the test suite:
 - Default 404 error handling &#10003;
 - Basic GET routing &#10003;
 - PUT, POST, DELETE routing &#10003;
-- Support parameterised routes
+- Support parameterised routes &#10003;
 - Support queries
 - Support custom middleware
 - Support custom error middleware

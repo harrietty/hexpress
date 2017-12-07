@@ -187,5 +187,17 @@ describe('Hexpress', function () {
           done();
         });
     });
+    it('makes a params object available on the req object', function (done) {
+      app.post('/api/spells/:id/foo/:name', (req, res) => {
+        res.status(200).send(`Post id ${req.params.id}, name ${req.params.name}`);
+      });
+      request(server)
+        .post('/api/spells/6/foo/toad')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('Post id 6, name toad');
+          done();
+        });
+    });
   });
 });
