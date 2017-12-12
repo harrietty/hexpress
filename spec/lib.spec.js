@@ -1,5 +1,9 @@
 const {expect} = require('chai');
-const {extractFragments, genPathRegex, getParams, PathObject} = require('../lib/url_path');
+const {extractFragments,
+  genPathRegex,
+  getParams,
+  getQueryObj,
+  PathObject} = require('../lib/url_path');
 
 describe('Url parser methods', function () {
   describe('extractFragments', function () {
@@ -22,7 +26,7 @@ describe('Url parser methods', function () {
       expect(genPathRegex(extractFragments('/api/spells/:id/foo/:name'))).to.eql(/\/api\/spells\/\w+\/foo\/\w+/);
     });
   });
-  
+
   describe('getParams', function () {
     it('returns an empty object if it gets no fragments', function () {
       expect(getParams()).to.eql({});
@@ -58,6 +62,14 @@ describe('Url parser methods', function () {
         parameterized: true,
         fragments: ['/api/spells/', ':id'],
         regex: genPathRegex(['/api/spells/', ':id'])
+      });
+    });
+  });
+
+  describe('getQueryObj', function () {
+    it('returns the correct query object when passed a query', function () {
+      expect(getQueryObj('color=black')).to.eql({
+        color: 'black'
       });
     });
   });

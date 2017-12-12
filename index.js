@@ -4,6 +4,7 @@ const url = require('url');
 const addCustomResMethods = require('./lib/res.methods');
 const { errors: { defaultResponse } } = require('./lib/middlewares');
 const { getParams,
+  getQueryObj,
   PathObject } = require('./lib/url_path');
 
 function Hexpress() {
@@ -68,7 +69,10 @@ const defaultError = {
 
 Hexpress.prototype.listen = function (...args) {
   const nodeServer = http.createServer((req, res) => {
-    const { pathname } = url.parse(req.url);
+    let { pathname, query } = url.parse(req.url);
+    if (query) {
+      req.query = getQueryObj(query);
+    }
     const method = req.method;
     res = addCustomResMethods(res);
 

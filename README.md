@@ -27,7 +27,7 @@ Run the test suite:
 - Basic app.get() routing &#10003;
 - app.put(), app.post(), app.delete(), app.all() routing &#10003;
 - Support parameterised routes &#10003;
-- Support queries
+- Support queries &#10003;
 - Support custom middleware &#10003;
 - Support custom error middleware &#10003;
 - Support serving static files

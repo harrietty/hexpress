@@ -316,6 +316,48 @@ describe('Hexpress', function () {
         });
     });
   });
+  describe('url queries', function () {
+    it('supports a single url query on a GET request', function (done) {
+      app.get('/api/cauldrons', (req, res) => {
+        if (req.query.color === 'black') res.status(200).send('One black cauldron');
+      });
+      request(server)
+        .get('/api/cauldrons?color=black')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('One black cauldron');
+          done();
+        });
+    });
+    it('supports a more than 1 url query on a GET request', function (done) {
+      app.get('/api/cauldrons', (req, res) => {
+        if (req.query.color === 'black' && req.query.price === '1') {
+          res.status(200).send('One black cauldron for £1');
+        }
+      });
+      request(server)
+        .get('/api/cauldrons?color=black&price=1')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('One black cauldron for £1');
+          done();
+        });
+    });
+    it('supports a more than 1 url query on a DELETE request', function (done) {
+      app.delete('/api/cauldrons', (req, res) => {
+        if (req.query.color === 'black' && req.query.price === '1') {
+          res.status(200).send('One black cauldron deleted');
+        }
+      });
+      request(server)
+        .delete('/api/cauldrons?color=black&price=1')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('One black cauldron deleted');
+          done();
+        });
+    });
+  });
   // xdescribe('custom req properties and methods', function () {
   //   let getReq, postReq;
   //   const app = new Hexpress();
