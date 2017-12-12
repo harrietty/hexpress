@@ -201,6 +201,20 @@ describe('Hexpress', function () {
           done();
         });
     });
+    it('works with third party middlewares', function (done) {
+      app.use(json());
+      app.post('/api', (req, res) => {
+        res.status(200).send({foo: req.body.sometext});
+      });
+      request(server)
+        .post('/api')
+        .send({sometext: 'Foo!'})
+        .expect(200)
+        .end((err, res) => {
+          expect(res.body).to.eql({foo: 'Foo!'});
+          done();
+        });
+    });
     it('passes the req and res through multiple custom middlewares in the correct order', function (done) {
       app.use((req, res, next) => {
         res.someProp = 'foo2';
@@ -357,23 +371,22 @@ describe('Hexpress', function () {
           done();
         });
     });
+  
   });
-  // xdescribe('custom req properties and methods', function () {
-  //   let getReq, postReq;
-  //   const app = new Hexpress();
-  //   app.use(json());
-  //   const server = app.listen(PORT);
-  //   app.get('/api/spells/:id', (request) => {
-  //     getReq = request;
-  //   });
-  //   app.post('/api/spells/:id', (request) => {
-  //     postReq = request;
-  //   });
-  //   it('has a req.body which is undefined by default', function () {
-  //     expect(getReq.body).to.be.undefined;
-  //   });
-  //   it('populates req.body when you use bodyParsing middleware', function () {
-  //     expect()
-  //   });
-  // });
+  describe('res methods', function () {
+    describe('res.send()', function () {
+      it('can send a JSON string', function (done) {
+        app.get('/', (req,res) => {
+          res.status(200).send({a: 400});
+        });
+        request(server)
+          .get('/')
+          .expect(200)
+          .end((err, res) => {
+            expect(res.body).to.eql({a: 400});
+            done();
+          });
+      });
+    });
+  });
 });
