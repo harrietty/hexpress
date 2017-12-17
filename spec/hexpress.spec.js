@@ -1,3 +1,4 @@
+const {Buffer} = require('buffer');
 const { expect } = require('chai');
 const request = require('supertest');
 const { json } = require('body-parser');
@@ -374,6 +375,40 @@ describe('Hexpress', function () {
   
   });
   describe('res methods', function () {
+    describe('res.set', function () {
+      it('allows user to set the headers by passing property and value as strings', function (done) {
+        app.get('/', (req,res) => {
+          res.set('Content-Type', 'application/foo');
+          res.status(200).send('hello world');
+        });
+        request(server)
+          .get('/')
+          .expect(200)
+          .expect('Content-Type', 'application/foo')
+          .end((err, res) => {
+            expect(res.text).to.equal('hello world');
+            done();
+          });
+      });
+      it('allows user to set the headers by passing an object with multiple values', function (done) {
+        app.get('/', (req,res) => {
+          res.set({
+            'Content-Type': 'application/foo',
+            'something': 'yay witches!'
+          });
+          res.status(200).send('hello world');
+        });
+        request(server)
+          .get('/')
+          .expect(200)
+          .expect('Content-Type', 'application/foo')
+          .expect('something', 'yay witches!')
+          .end((err, res) => {
+            expect(res.text).to.equal('hello world');
+            done();
+          });
+      });
+    });
     describe('res.send()', function () {
       it('can send a JSON string', function (done) {
         app.get('/', (req,res) => {
@@ -384,6 +419,46 @@ describe('Hexpress', function () {
           .expect(200)
           .end((err, res) => {
             expect(res.body).to.eql({a: 400});
+            done();
+          });
+      });
+      it('can send a buffer', function (done) {
+        app.get('/', (req,res) => {
+          res.status(200).send(Buffer.from('hello world'));
+        });
+        request(server)
+          .get('/')
+          .expect(200)
+          .expect('Content-Type', 'application/octet-stream')
+          .end((err, res) => {
+            expect(res.body.toString()).to.equal('hello world');
+            done();
+          });
+      });
+      it('can send a buffer as a string if user sets Content-Type fo text/html', function (done) {
+        app.get('/', (req,res) => {
+          res.set('Content-Type', 'text/html');
+          res.status(200).send(Buffer.from('hello world'));
+        });
+        request(server)
+          .get('/')
+          .expect(200)
+          .expect('Content-Type', 'application/text/html')
+          .end((err, res) => {
+            expect(res.text).to.equal('hello world');
+            done();
+          });
+      });
+      it('can send an HTML string', function (done) {
+        app.get('/', (req,res) => {
+          res.status(200).send('<p>Buy quality pumpkins here!</p>');
+        });
+        request(server)
+          .get('/')
+          .expect(200)
+          .expect('Content-Type', 'text/html')
+          .end((err, res) => {
+            expect(res.text).to.equal('<p>Buy quality pumpkins here!</p>');
             done();
           });
       });
