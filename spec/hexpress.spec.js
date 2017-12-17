@@ -294,6 +294,30 @@ describe('Hexpress', function () {
         });
     });
   });
+  describe('app.use(express.static())', function () {
+    it('Hexpress.static() returns a middleware that serves static files from provided directory', function (done) {
+      const staticMiddleware = Hexpress.static(path.join(__dirname, 'files/public'));
+      expect(staticMiddleware).to.be.a('function');
+      app.use(staticMiddleware);
+      request(server)
+        .get('/main.css')
+        .end((err, res) => {
+          expect(res.text).to.equal('h1 {color: red;}');
+          done();
+        });
+    });
+    it('Hexpress.static() allows Hexpress to move onto the next middleware if static file not found', function (done) {
+      const staticMiddleware = Hexpress.static(path.join(__dirname, 'files/public'));
+      expect(staticMiddleware).to.be.a('function');
+      app.use(staticMiddleware);
+      request(server)
+        .get('/foo.css')
+        .end((err, res) => {
+          expect(res.text).to.equal('Not Found');
+          done();
+        });
+    });
+  });
   describe('parameterised routing', function () {
     it('adds a handler to /api/spells/:id', function (done) {
       app.get('/api/spells/:id', (req, res) => {

@@ -30,6 +30,6 @@ Run the test suite:
 - Support queries &#10003;
 - Support custom middleware &#10003;
 - Support custom error middleware &#10003;
-- Support serving static files
+- Support serving static files &#10003;
 - Support using a template engine
 - Hexpress.Router ?

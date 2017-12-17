@@ -2,7 +2,7 @@ const http = require('http');
 const url = require('url');
 
 const addCustomResMethods = require('./lib/res.methods');
-const { errors: { defaultResponse } } = require('./lib/middlewares');
+const { static, errors: { defaultResponse } } = require('./lib/middlewares');
 const { getParams,
   getQueryObj,
   PathObject } = require('./lib/url_path');
@@ -11,6 +11,8 @@ function Hexpress() {
   this.middlewares = [];
   this.errorMiddlewares = [defaultResponse];
 }
+
+Hexpress.static = static;
 
 Hexpress.prototype.get = function (path, handler) {
   this.middlewares.push({
