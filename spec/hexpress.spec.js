@@ -518,5 +518,72 @@ describe('Hexpress', function () {
           });
       });
     });
+    describe('res.sendStatus()', function () {
+      it('sends a status and an appropriate status message for 200', function (done) {
+        app.get('/', (req, res) => {
+          res.sendStatus(200);
+        });
+        request(server)
+          .get('/')
+          .expect(200)
+          .end((err, res) => {
+            expect(res.headers['content-type']).to.equal('text/plain');
+            expect(res.text).to.equal('OK');
+            done();
+          });
+      });
+      it('sends a status and an appropriate status message for 201', function (done) {
+        app.get('/', (req, res) => {
+          res.sendStatus(201);
+        });
+        request(server)
+          .get('/')
+          .expect(201)
+          .end((err, res) => {
+            expect(res.headers['content-type']).to.equal('text/plain');
+            expect(res.text).to.equal('Created');
+            done();
+          });
+      });
+      it('sends a status and an appropriate status message for 400', function (done) {
+        app.get('/', (req, res) => {
+          res.sendStatus(400);
+        });
+        request(server)
+          .get('/')
+          .expect(400)
+          .end((err, res) => {
+            expect(res.headers['content-type']).to.equal('text/plain');
+            expect(res.text).to.equal('Bad Request');
+            done();
+          });
+      });
+      it('sends a status and an appropriate status message for 500', function (done) {
+        app.get('/', (req, res) => {
+          res.sendStatus(500);
+        });
+        request(server)
+          .get('/')
+          .expect(500)
+          .end((err, res) => {
+            expect(res.headers['content-type']).to.equal('text/plain');
+            expect(res.text).to.equal('Internal Server Error');
+            done();
+          });
+      });
+      it('sends a status and an appropriate status message for 418', function (done) {
+        app.get('/', (req, res) => {
+          res.sendStatus(418);
+        });
+        request(server)
+          .get('/')
+          .expect(418)
+          .end((err, res) => {
+            expect(res.headers['content-type']).to.equal('text/plain');
+            expect(res.text).to.equal('I\'m a teapot');
+            done();
+          });
+      });
+    });
   });
 });
