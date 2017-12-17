@@ -75,7 +75,6 @@ Hexpress.prototype.listen = function (...args) {
     }
     const method = req.method;
     res = addCustomResMethods(res);
-
     const tryMiddlewares = (middlewares, req, res, err = defaultError) => {
       if (middlewares.length === 0) return tryErrorMiddlewares(this.errorMiddlewares, err, req, res);
       const mw = middlewares[0];

@@ -4,6 +4,7 @@ const {extractFragments,
   getParams,
   getQueryObj,
   PathObject} = require('../lib/url_path');
+const {divineContentType} = require('../lib/helpers');
 
 describe('Url parser methods', function () {
   describe('extractFragments', function () {
@@ -71,6 +72,16 @@ describe('Url parser methods', function () {
       expect(getQueryObj('color=black')).to.eql({
         color: 'black'
       });
+    });
+  });
+});
+describe('Other helpers', function () {
+  describe('divineContentType', function () {
+    it('recognises content type from a filepath with extension', function () {
+      expect(divineContentType('spec/lib/foo/index.html')).to.equal('text/html');
+      expect(divineContentType('spec/lib/foo/main.js')).to.equal('application/javascript');
+      expect(divineContentType('spec/lib/foo/main.json')).to.equal('application/json');
+      expect(divineContentType('spec/lib/foo/main.css')).to.equal('text/css');
     });
   });
 });

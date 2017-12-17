@@ -1,4 +1,5 @@
 const {Buffer} = require('buffer');
+const path = require('path');
 const { expect } = require('chai');
 const request = require('supertest');
 const { json } = require('body-parser');
@@ -459,6 +460,60 @@ describe('Hexpress', function () {
           .expect('Content-Type', 'text/html')
           .end((err, res) => {
             expect(res.text).to.equal('<p>Buy quality pumpkins here!</p>');
+            done();
+          });
+      });
+    });
+    describe('res.sendFile()', function () {
+      it('sends an HTML file and sets appropriate Content-Type', function (done) {
+        app.get('/', (req, res) => {
+          res.status(200).sendFile(path.resolve(__dirname, './files/index.html'));
+        });
+        request(server)
+          .get('/')
+          .expect(200)
+          .end((err, res) => {
+            expect(res.headers['content-type']).to.equal('text/html');
+            expect(res.text).to.equal('<!DOCTYPE html>\n<html lang="en">\n</html>');
+            done();
+          });
+      });
+      it('sends a JS file and sets appropriate Content-Type', function (done) {
+        app.get('/', (req, res) => {
+          res.status(200).sendFile(path.resolve(__dirname, './files/main.js'));
+        });
+        request(server)
+          .get('/')
+          .expect(200)
+          .end((err, res) => {
+            expect(res.headers['content-type']).to.equal('application/javascript');
+            expect(res.text).to.equal('console.log(\'Fooo!\');');
+            done();
+          });
+      });
+      it('sends a JSON file and sets appropriate Content-Type', function (done) {
+        app.get('/', (req, res) => {
+          res.status(200).sendFile(path.resolve(__dirname, './files/main.json'));
+        });
+        request(server)
+          .get('/')
+          .expect(200)
+          .end((err, res) => {
+            expect(res.headers['content-type']).to.equal('application/json');
+            expect(res.text).to.equal('{\n  "a": "foo"\n}');
+            done();
+          });
+      });
+      it('sends a CSS file and sets appropriate Content-Type', function (done) {
+        app.get('/', (req, res) => {
+          res.status(200).sendFile(path.resolve(__dirname, './files/style.css'));
+        });
+        request(server)
+          .get('/')
+          .expect(200)
+          .end((err, res) => {
+            expect(res.headers['content-type']).to.equal('text/css');
+            expect(res.text).to.equal('body {\n  background-color: hotpink;\n}');
             done();
           });
       });
