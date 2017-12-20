@@ -294,6 +294,36 @@ describe('Hexpress', function () {
         });
     });
   });
+  describe.only('app.set("view engine")', function () {
+    it('set EJS as a view engine and render a page', function (done) {
+      app.set('view engine', 'ejs');
+      app.set('views', './spec/views');
+      app.get('/', (req, res) => {
+        res.render('index');
+      });
+      request(server)
+        .get('/')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('<body>Hello world</body>');
+          done();
+        });
+    });
+    it('passes data to a template page', function (done) {
+      app.set('view engine', 'ejs');
+      app.set('views', './spec/views');
+      app.get('/', (req, res) => {
+        res.render('broomsticks', {brooms: ['swift', 'nimble', 'woody', 'handhewn', 'gnarled']});
+      });
+      request(server)
+        .get('/')
+        .expect(200)
+        .end((err, res) => {
+          expect(res.text).to.equal('<body>\n<p>swift</p><p>nimble</p><p>woody</p><p>handhewn</p><p>gnarled</p>\n</body>');
+          done();
+        });
+    });
+  });
   describe('app.use(express.static())', function () {
     it('Hexpress.static() returns a middleware that serves static files from provided directory', function (done) {
       const staticMiddleware = Hexpress.static(path.join(__dirname, 'files/public'));

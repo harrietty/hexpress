@@ -1,5 +1,6 @@
 const http = require('http');
 const url = require('url');
+const path = require('path');
 
 const addCustomResMethods = require('./lib/res.methods');
 const { static, errors: { defaultResponse } } = require('./lib/middlewares');
@@ -10,6 +11,9 @@ const { getParams,
 function Hexpress() {
   this.middlewares = [];
   this.errorMiddlewares = [defaultResponse];
+  this.settings = {
+    views: path.join(process.cwd(), 'views')
+  };
 }
 
 Hexpress.static = static;
@@ -65,6 +69,14 @@ Hexpress.prototype.use = function (mw) {
   }
 };
 
+Hexpress.prototype.set = function (prop, name) {
+  if (prop === 'view engine') {
+    this.settings['view engine'] = require(name);
+  } else if (prop === 'views') {
+    this.settings.views = path.resolve(process.cwd(), name);
+  }
+};
+
 const defaultError = {
   error: 'Internal server error'
 };
@@ -76,7 +88,7 @@ Hexpress.prototype.listen = function (...args) {
       req.query = getQueryObj(query);
     }
     const method = req.method;
-    res = addCustomResMethods(res);
+    res = addCustomResMethods(res, this.settings);
     const tryMiddlewares = (middlewares, req, res, err = defaultError) => {
       if (middlewares.length === 0) return tryErrorMiddlewares(this.errorMiddlewares, err, req, res);
       const mw = middlewares[0];

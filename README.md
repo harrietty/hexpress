@@ -31,5 +31,5 @@ Run the test suite:
 - Support custom middleware &#10003;
 - Support custom error middleware &#10003;
 - Support serving static files &#10003;
-- Support using a template engine
+- Support using a template engine &#10003;
 - Hexpress.Router ?
